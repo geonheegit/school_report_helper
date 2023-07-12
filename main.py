@@ -9,7 +9,7 @@ window.title("생기부 도우미 by 30313 한건희")
 window.geometry("1040x640+50+50")
 window.resizable(True, True)
 
-# 생기부 금지어 리스트
+# 생기부 금지어 리스트 (리스트 목록 받아서 기능 추가하기)
 forbidden_words = []
 
 # 폰트
