@@ -24,7 +24,7 @@ bold_font=tkinter.font.Font(family="맑은 고딕", size=20, slant="roman")
 sub_font=tkinter.font.Font(family="맑은 고딕", size=15, slant="roman")
 
 # 함수
-def highlight_word_input(word2search, color): # red, lightblue, orange, green
+def highlight_word(word2search, color, textbox): # red, lightblue, orange, green
     user_input = str(word2search)  # 검색할 문자
     text_content = entry_before_check.get("1.0", "end-1c")  # text 위젯의 전체 내용
 
@@ -32,49 +32,44 @@ def highlight_word_input(word2search, color): # red, lightblue, orange, green
     # entry_before_check.tag_remove("highlight", "1.0", "end")
 
     # 입력 받은 단어 찾기
-    start = "1.0"
-    while True:
-        start = entry_before_check.search(user_input, start, stopindex="end")
-        if not start:
-            break
+    if textbox == "input_text":
+        start = "1.0"
+        while True:
+            start = entry_before_check.search(user_input, start, stopindex="end")
+            if not start:
+                break
 
-        end = f"{start}+{len(user_input)}c"
-        entry_before_check.tag_add("highlight_input", start, end)
-        start = end
+            end = f"{start}+{len(user_input)}c"
+            entry_before_check.tag_add("highlight_input", start, end)
+            start = end
 
-    # 하이라이트 표시를 위한 태그 설정
-    if color == "red":
-        entry_before_check.tag_config("highlight_input", background="red")
-    elif color == "orange":
-        entry_before_check.tag_config("highlight_input", background="orange")
-    elif color == "green":
-        entry_before_check.tag_config("highlight_input", background="green")
+    elif textbox == "output_text":
+        start = "1.0"
+        while True:
+            start = entry_fixed_txt.search(user_input, start, stopindex="end")
+            if not start:
+                break
 
-def highlight_word_output(word2search, color): # red, lightblue, orange, green
-    user_input = str(word2search)  # 검색할 문자
-    text_content = entry_fixed_txt.get("1.0", "end-1c")  # text 위젯의 전체 내용
-
-    # 기존에 설정된 태그 제거
-    # entry_before_check.tag_remove("highlight", "1.0", "end")
-
-    # 입력 받은 단어 찾기
-    start = "1.0"
-    while True:
-        start = entry_fixed_txt.search(user_input, start, stopindex="end")
-        if not start:
-            break
-
-        end = f"{start}+{len(user_input)}c"
-        entry_fixed_txt.tag_add("highlight_output", start, end)
-        start = end
+            end = f"{start}+{len(user_input)}c"
+            entry_fixed_txt.tag_add("highlight_output", start, end)
+            start = end
 
     # 하이라이트 표시를 위한 태그 설정
-    if color == "red":
-        entry_fixed_txt.tag_config("highlight_output", background="red")
-    elif color == "orange":
-        entry_fixed_txt.tag_config("highlight_output", background="orange")
-    elif color == "green":
-        entry_fixed_txt.tag_config("highlight_output", background="green")
+    if textbox == "input_text":
+        if color == "red":
+            entry_before_check.tag_config("highlight_input", background="red")
+        elif color == "orange":
+            entry_before_check.tag_config("highlight_input", background="orange")
+        elif color == "green":
+            entry_before_check.tag_config("highlight_input", background="green")
+
+    elif textbox == "output_text":
+        if color == "red":
+            entry_fixed_txt.tag_config("highlight_output", background="red")
+        elif color == "orange":
+            entry_fixed_txt.tag_config("highlight_output", background="orange")
+        elif color == "green":
+            entry_fixed_txt.tag_config("highlight_output", background="green")
 
 def count():
     linespace_count = 0
@@ -139,7 +134,7 @@ def check_spell():
     for i in forbidden_words:
         if enter_removed_original_txt.find(i) != -1:
             # print(i)
-            highlight_word_input(i, "red")
+            highlight_word(i, "red", "input_text")
             forbidden_txt.insert("current", i)
             forbidden_txt.insert("current", ", ")
 
@@ -153,7 +148,7 @@ def check_spell():
     # 맞춤법 수정 하이라이트
     for i in detected_words_list:
         print(i)
-        highlight_word_output(i, "green")
+        highlight_word(i, "green", "output_text")
 
 # 창 분할
 notebook = tkinter.ttk.Notebook(window, width=1040, height=600)
