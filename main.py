@@ -2,11 +2,12 @@ from hanspell import spell_checker
 import tkinter.ttk
 import tkinter.font
 import re
+import webbrowser
 
 window=tkinter.Tk()
 
 window.title("생기부 도우미 by 광철 30313 한건희")
-window.geometry("1040x640+50+50")
+window.geometry("1040x680+50+10")
 window.resizable(True, True)
 
 # 생기부 금지어 리스트 (리스트 목록 받아서 기능 추가하기)
@@ -22,8 +23,39 @@ all_words = []
 # 폰트
 bold_font=tkinter.font.Font(family="맑은 고딕", size=20, slant="roman")
 sub_font=tkinter.font.Font(family="맑은 고딕", size=15, slant="roman")
+simple_font=tkinter.font.Font(family="맑은 고딕", size=10, slant="roman")
 
 # 함수
+def open_website():
+    url = "http://speller.cs.pusan.ac.kr/"  # 여기에 열고자 하는 웹사이트의 URL을 입력하세요
+    webbrowser.open(url)
+
+"""
+def highlight_differences():
+    text1_content = entry_before_check.get("1.0", "end-1c")  # 첫 번째 text 위젯의 내용
+    text2_content = entry_fixed_txt.get("1.0", "end-1c")  # 두 번째 text 위젯의 내용
+
+    # 기존에 설정된 태그 제거
+    entry_fixed_txt.tag_remove("highlight", "1.0", "end")
+
+    # 단어 단위로 비교하여 하이라이트 표시
+    words1 = text1_content.split()
+    words2 = text2_content.split()
+
+    print(text1_content)
+    print(words1)
+    print(words2)
+
+    for word1, word2 in zip(words1, words2):
+        if word1 != word2:
+            start = entry_fixed_txt.search(word2, "1.0", stopindex="end", count=tkinter.END)
+            end = f"{start}+{len(word2)}c"
+            entry_fixed_txt.tag_add("highlight", start, end)
+
+    # 하이라이트 표시를 위한 태그 설정
+    entry_fixed_txt.tag_config("highlight", background="green")
+"""
+
 def highlight_word(word2search, color, textbox): # red, lightblue, orange, green
     user_input = str(word2search)  # 검색할 문자
     text_content = entry_before_check.get("1.0", "end-1c")  # text 위젯의 전체 내용
@@ -78,7 +110,7 @@ def count():
         if "\n" in i:
             linespace_count += 1
     counted_number = len(str(count_txt)) - 1
-    txt_bytes = len(str(count_txt).encode()) - 1 + linespace_count
+    txt_bytes = len(str(count_txt).encode()) - 2 + linespace_count
     count_result_txt.config(text=f'▶ {txt_bytes}바이트, 공백 포함 {counted_number}자')
 
 def check_spell():
@@ -112,11 +144,12 @@ def check_spell():
         checked_splitted_list.append(splitted_result.checked)
 
         for k, v in splitted_result.words.items():
-            if v != 0:
+            if v == 1 or v == 2:
                 detected_words_list.append(str(k))
                 joined_str += str(k)
                 joined_str += ", "
 
+        # print(splitted_result.checked)
         if "<end>" in joined_str:
             joined_str = re.sub('<end>', '', joined_str)
         if "<br>" in joined_str:
@@ -124,7 +157,7 @@ def check_spell():
         if "&quot;" in joined_str:
             joined_str = re.sub('&quot;', '', joined_str)
 
-    # print(checked_splitted_list)
+    # print(detected_words_list)
     summed_str = ""
     for i in checked_splitted_list:
         summed_str += str(i)
@@ -133,7 +166,6 @@ def check_spell():
     #기재 금기어 하이라이트
     for i in forbidden_words:
         if enter_removed_original_txt.find(i) != -1:
-            # print(i)
             highlight_word(i, "red", "input_text")
             forbidden_txt.insert("current", i)
             forbidden_txt.insert("current", ", ")
@@ -146,12 +178,13 @@ def check_spell():
     spell_error_txt.insert("1.0", joined_str)
     
     # 맞춤법 수정 하이라이트
-    for i in detected_words_list:
-        print(i)
-        highlight_word(i, "green", "output_text")
+    # highlight_differences()
+    # for i in detected_words_list:
+    #     if enter_removed_original_txt.find(i) != -1:
+    #         highlight_word(i, "green", "output_text")
 
 # 창 분할
-notebook = tkinter.ttk.Notebook(window, width=1040, height=600)
+notebook = tkinter.ttk.Notebook(window, width=1040, height=680)
 notebook.pack()
 
 # 1번 창 생성
@@ -161,6 +194,13 @@ notebook.add(frame1_1, text="맞춤법 검사 및 금지어 확인")
 # 1번 창 구성 요소들
 title_txt = tkinter.Label(frame1_1, text="맞춤법/금지어 검사기", font=bold_font)
 title_txt.pack(pady=10)
+
+notice_txt = tkinter.Label(frame1_1, text="※ 맞춤법 검사 기능은 작동하나, 정확성은 보장할 수 없으므로 옆의 버튼을 눌러 사용하시기 바랍니다. (금기어 기능은 작동함)",
+                           bg="darkorange")
+notice_txt.pack(pady=1)
+
+openweb_button=tkinter.Button(frame1_1, text="검사사이트 이동", command=open_website)
+openweb_button.place(x=900, y=55)
 
 input_txt = tkinter.Label(frame1_1, text="▼ 검사할 내용 입력 ▼")
 input_txt.pack(pady=10)
@@ -183,7 +223,7 @@ forbidden_txt = tkinter.Text(inside_frame1_1, width=50, height=4, spacing2=5)
 forbidden_txt.pack(pady=10, side='right')
 forbidden_txt.insert("1.0", "감지된 기재 금지어")
 
-output_txt = tkinter.Label(frame1_1, text="▼ 수정된 내용 ▼")
+output_txt = tkinter.Label(frame1_1, text="▼ 맞춤법 수정된 내용 ▼")
 output_txt.pack(pady=10)
 
 entry_fixed_txt = tkinter.Text(frame1_1, width=100, height=10, spacing2=5)
@@ -205,7 +245,8 @@ count_result_txt=tkinter.Label(frame2, text="▶진로활동: 2100바이트, 약
                                             "▶자율활동: 1500바이트, 약 500자 || "
                                             "▶동아리활동: 1500바이트, 약 500자 || "
                                             "\n ▶과목별세부능력특기사항: 1500바이트, 약 500자 || "
-                                            "▶행동특성및종합의견: 1500바이트, 약 500자")
+                                            "▶행동특성및종합의견: 1500바이트, 약 500자"
+                                            "\n \n영어, 숫자, 특수문자, 띄어쓰기 1바이트 / 엔터키 2바이트 / 한글 3바이트")
 count_result_txt.pack(pady=5)
 
 count_textbox = tkinter.Text(frame2, width=100, height=25, spacing2=5)
