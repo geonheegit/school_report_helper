@@ -16,18 +16,26 @@ forbidden_words = ["광양제철고", "제철고", "제고", "광철고", "한�
                    "외국", "해외", "어학", "연수", "교외", "수상", "대회", "표창", "발명", "특허", "출원",
                    "인증", "ebs", "EBS", "ted", "TED", "토익", "토플", "텝스", "한자급수시험", "개더타운",
                    "게더타운", "유튜브", "K-MOOC", "장학", "자격증", "방과후", "MOOC", "KOCW", "G리그",
-                   "포스테드", "POSTED", "포스레보", "POSREVO"]
+                   "포스테드", "POSTED", "포스레보", "POSREVO", "포스코", "POSCO", "posco", "Posco",
+                   "방과후", "방과후학교", "어학시험", "장학금", "장학", "네이버", "구글", "네이버밴드", "구글클래스룸",
+                   "네이버 밴드", "구글 클래스룸", "유튜버", "UN", "유네스코", "커리어넷", "메이저맵", "반크", "제페토",
+                   "아이폰", "KTX", "SRT", "패들렛", "띵커벨", "미리캔버스", "망고보드", "인스타그램", "페이스북",
+                   "카카오톡", "카톡", "단톡"]
 
 all_words = []
 
 # 폰트
 bold_font=tkinter.font.Font(family="맑은 고딕", size=20, slant="roman")
 sub_font=tkinter.font.Font(family="맑은 고딕", size=15, slant="roman")
-simple_font=tkinter.font.Font(family="맑은 고딕", size=10, slant="roman")
+simple_font=tkinter.font.Font(family="맑은 고딕", size=13, slant="roman")
 
 # 함수
 def open_website():
-    url = "http://speller.cs.pusan.ac.kr/"  # 여기에 열고자 하는 웹사이트의 URL을 입력하세요
+    url = "http://speller.cs.pusan.ac.kr/"
+    webbrowser.open(url)
+
+def open_banned_word_image():
+    url = "https://drive.google.com/file/d/1Mc3K-gySNDXoYKjhjH4deRfNXCjtw_2U/view?usp=drivesdk"
     webbrowser.open(url)
 
 """
@@ -189,10 +197,10 @@ notebook.pack()
 
 # 1번 창 생성
 frame1_1 = tkinter.Frame(window)
-notebook.add(frame1_1, text="맞춤법 검사 및 금지어 확인")
+notebook.add(frame1_1, text="맞춤법 검사 및 기재 금기어 확인")
 
 # 1번 창 구성 요소들
-title_txt = tkinter.Label(frame1_1, text="맞춤법/금지어 검사기", font=bold_font)
+title_txt = tkinter.Label(frame1_1, text="맞춤법/기재 금기어 검사기", font=bold_font)
 title_txt.pack(pady=10)
 
 notice_txt = tkinter.Label(frame1_1, text="※ 맞춤법 검사 기능은 작동하나, 정확성은 보장할 수 없으므로 옆의 버튼을 눌러 사용하시기 바랍니다. (금기어 기능은 작동함)",
@@ -258,5 +266,23 @@ count_button.pack(pady=10)
 
 count_result_txt=tkinter.Label(frame2, text="▶ 바이트, 자", font = sub_font)
 count_result_txt.pack(pady=5)
+
+# 3번 창 생성
+frame3=tkinter.Frame(window)
+notebook.add(frame3, text="도움말 및 유의사항")
+
+# 3번 창 구성 요소들
+title_txt3 = tkinter.Label(frame3, text="도움말 및 유의사항", font=bold_font)
+title_txt3.pack(pady=10)
+
+main_txt = tkinter.Label(frame3, text="● 맞춤법 검사 기능은 믿을만한가요? "
+                                      "\n▶ 네이버 맞춤법 검사기에 기반한 기술이지만 혹시 모르니 맹신하지 말고 참고용으로만 사용하는 것이 추천됩니다."
+                                      "\n\n● 금기어 리스트 유의사항"
+                                      "\n▶ 금기어에는 <기관명>, <상호명>, <국제기구> 등등의 카테고리가 있습니다."
+                                      "\n모든 카테고리에 해당하는 금기어를 전부 리스트에 적을 수는 없기 때문에 학교생활기록부 작성 안내 종이를 꼭 참고하세요.", font=simple_font)
+main_txt.pack(pady=10)
+
+openimage_button=tkinter.Button(frame3, text="모든 금기어 사진 확인하기", command=open_banned_word_image)
+openimage_button.pack(pady=10)
 
 window.mainloop()
